@@ -19,6 +19,8 @@ var animateRotation = false;
 var animateOtherRotation = false;
 var cameraRotation = 0.0;
 
+var mouse = { x: 0, y: 0};
+
 var scene = new THREE.Scene();
 
 var camera = new THREE.PerspectiveCamera( 35, window.innerWidth / window.innerHeight, .1, 3000 );
@@ -31,6 +33,12 @@ renderer.setClearColor(0x000000);
 renderer.setPixelRatio(document.getElementById('myCanvas').devicePixelRatio);
 // If you want the render to span the window, uncomment this
 renderer.setSize(window.innerWidth, window.innerHeight);
+
+document.addEventListener('mouseMove', function(event) {
+  //normalize mouse x and y positions
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1; },
+  false);
 
 
 // Add another sphere
@@ -118,7 +126,17 @@ scene.add( directionalLight2 );
 
 // Use this for not-necessarily-static scenes or scenes you want to animate
 function animate() {
-  // If we're rotating the camera change that here.
+  // move the camera forward based on  current direction
+  var forwardDirection = new THREE.Vector3();
+  camera.getWorldDirection(forwardDirection);  // get the direction camera is facing
+  var moveSpeed = 0.1;  
+  camera.position.add(forwardDirection.multiplyScalar(moveSpeed)); 
+
+  // update camera look direction based on mouse movement
+  var cameraRotationSpeed = 0.002; 
+  camera.rotation.y -= mouse.x * cameraRotationSpeed;  // left-right movement
+  camera.rotation.x -= mouse.y * cameraRotationSpeed;  // up-down movement
+
   if( animateRotation ) 
     // The applyAxisAngle method rotates about an axis in space
     camera.position.applyAxisAngle( new THREE.Vector3(0.0, 1.0, 0.0 ), turnSpeed * 0.1 );
