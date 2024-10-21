@@ -45,6 +45,69 @@ var sphereMaterial2 = new THREE.MeshLambertMaterial( {color: 0xff0000} );
 var sphere2Mesh = new THREE.Mesh( sphere2, sphereMaterial2 );
 scene.add( sphere2Mesh );
 
+//start of the object pool
+class Object{
+  //creates the object with x y and z points
+  constructor(x, y, z) {
+    this.x = x;
+    this.y = y;
+    this.z = z;
+  }
+
+  update() {
+    // changes when object in pool is used
+  }
+}
+
+//makes the 
+class ObjectSize {
+  constructor(maxSize) {
+    this.pool = [];
+    this.maxSize = maxSize;
+  }
+
+  get() {
+    if (this.pool.length > 0) {
+      return this.pool.pop();
+    } else if (this.pool.length < this.maxSize) {
+      return new Object();
+    } else {
+      return null; // Pool is full
+    }
+  }
+
+  release(object) {
+    this.pool.push(object);
+  }
+}
+
+// sets the pool at 100 objects
+const objPool = new ObjectPool(100);
+
+function createObj() {
+  for (let i = 0; i < 50; i++) {
+    const obj = objPool.get();
+
+    if (obj) {
+      // Initialize object properties
+      obj.x = Math.random() * 100;
+      obj.y = Math.random() * 100;
+      obj.z = Math.random() * 100;
+
+    }
+  }
+}
+
+function updateObj() {
+  // update later 
+}
+
+function removeObj(Object) {
+  // removes object from pool
+
+  objPool.release(obj);
+}
+
 // Lights
 var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.75 );
 directionalLight.position.y = 10.0;
