@@ -60,6 +60,12 @@ var sphereMaterial2 = new THREE.MeshLambertMaterial( {color: 0xff0000} );
 var sphere2Mesh = new THREE.Mesh( sphere2, sphereMaterial2 );
 scene.add( sphere2Mesh );
 
+//creates second type of object to show up
+//creates cubes that can appear
+const geometry = new THREE.BoxGeometry( 1, 1, 1 ); 
+const material = new THREE.MeshBasicMaterial( {color: 0x00ff00} ); 
+const cube = new THREE.Mesh( geometry, material ); 
+scene.add( cube );
 //start of the object pool
 class Object{
   //creates the object with x y and z points
