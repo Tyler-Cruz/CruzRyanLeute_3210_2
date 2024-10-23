@@ -127,7 +127,24 @@ function removeObj(Object) {
   // removes object from pool
 
   objPool.release(obj);
+  objPool.pop(obj);
 }
+
+//creating raycaster
+raycaster = new THREE.Raycaster();
+
+	renderer.setPixelRatio( window.devicePixelRatio );
+  renderer.setSize( window.innerWidth, window.innerHeight );
+	renderer.setAnimationLoop( animate );
+	document.body.appendChild( renderer.domElement );
+
+document.addEventListener( 'mousemove', onDocumentMouseMove );
+
+const effectController = {
+  focalLength: 15,
+	focalDepth: 3
+};
+
 
 // Lights
 var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.75 );
