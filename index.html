@@ -24,7 +24,7 @@ var mouse = { x: 0, y: 0};
 var scene = new THREE.Scene();
 
 var camera = new THREE.PerspectiveCamera( 35, window.innerWidth / window.innerHeight, .1, 3000 );
-camera.position.z = 15;  
+camera.position.set(0,0,15);   
 camera.lookAt( new THREE.Vector3(xLookAt,yLookAt,zLookAt));
 scene.add( camera );
 
@@ -35,13 +35,13 @@ rearCamera.rotation.copy(camera.rotation);
 scene.add( rearCamera );
 
 
-var renderer = new THREE.WebGLRenderer({canvas: myCanvas});
+var renderer = new THREE.WebGLRenderer({canvas: document.getElementById('myCanvas')});
 renderer.setClearColor(0x000000);
 renderer.setPixelRatio(document.getElementById('myCanvas').devicePixelRatio);
 // If you want the render to span the window, uncomment this
 renderer.setSize(window.innerWidth, window.innerHeight);
 
-document.addEventListener('mouseMove', function(event) {
+document.addEventListener('mousemove', function(event) {
   //normalize mouse x and y positions
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1; },
@@ -81,7 +81,7 @@ class Object{
 }
 
 //makes the 
-class ObjectSize {
+class ObjectPool {
   constructor(maxSize) {
     this.pool = [];
     this.maxSize = maxSize;
