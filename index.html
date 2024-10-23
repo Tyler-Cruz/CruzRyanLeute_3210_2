@@ -127,7 +127,24 @@ function removeObj(Object) {
   // removes object from pool
 
   objPool.release(obj);
+  objPool.pop(obj);
 }
+
+//creating raycaster
+raycaster = new THREE.Raycaster();
+
+	renderer.setPixelRatio( window.devicePixelRatio );
+  renderer.setSize( window.innerWidth, window.innerHeight );
+	renderer.setAnimationLoop( animate );
+	document.body.appendChild( renderer.domElement );
+
+document.addEventListener( 'mousemove', onDocumentMouseMove );
+
+const effectController = {
+  focalLength: 15,
+	focalDepth: 3
+};
+
 
 // Lights
 var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.75 );
@@ -185,6 +202,25 @@ function toggleRotation() {
 }
 function toggleOtherRotation() {
   animateOtherRotation = !animateOtherRotation;
+}
+
+//collision of camera:
+//check the values of the camera and objects to see if there is an object within a certain distance
+//if it hits that value destroy the object and shake camera for ~one second
+function collision(){
+
+	// if(camera.position == object.position){
+
+		//removes object collided with
+		removeObj();
+
+		//randomly shakes camera when hit
+		for(let i = 0; i < 100; i++){
+		camera.rotation.y -= Math.random().x * cameraRotation;  
+  		camera.rotation.x -= Math.random().y * cameraRotation;  
+		}
+
+	//}
 }
 
 // Simple way to setup keybaord controls:
