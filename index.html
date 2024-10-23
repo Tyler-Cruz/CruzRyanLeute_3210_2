@@ -416,7 +416,7 @@ document.addEventListener( "keydown", keyHandler, false );
 
 				camera.updateMatrixWorld();
 
-				// find intersections
+				// above and beyond: raycaster allows for mouse picking of objects in space
 				raycaster.setFromCamera( mouse, camera );
 
 				const intersects = raycaster.intersectObjects( scene.children, false );
