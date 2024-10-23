@@ -293,7 +293,7 @@ document.addEventListener( "keydown", keyHandler, false );
 			import * as THREE from 'three';
 
 			import Stats from 'three/addons/libs/stats.module.js';
-			import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+			//import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 
 			let camera, scene, raycaster, renderer, stats;
 
@@ -353,10 +353,6 @@ document.addEventListener( "keydown", keyHandler, false );
 					focalLength: 15,
 					focalDepth: 3
 				};
-
-				const gui = new GUI();
-				gui.add( effectController, 'focalLength', 1, 135, 0.01 );
-				gui.add( effectController, 'focalDepth', 0.1, 100, 0.001 );
 			}
 
 			function onWindowResize() {
@@ -424,7 +420,22 @@ document.addEventListener( "keydown", keyHandler, false );
 				renderer.clear();
 				renderer.render( scene, camera );
 
-			}
+
+			    // adding rearview mirror view in top right corner	
+
+				renderer.setScissorTest(false);
+  				renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
+  				renderer.render(scene, camera);
+
+ 				
+				 var rearViewWidth = window.innerWidth * 0.25;
+				 var rearViewHeight = window.innerHeight * 0.25;
+				 renderer.setScissorTest(true);
+				 renderer.setScissor(window.innerWidth - rearViewWidth - 10, window.innerHeight - rearViewHeight - 10, rearViewWidth, rearViewHeight);
+				 renderer.setViewport(window.innerWidth - rearViewWidth - 10, window.innerHeight - rearViewHeight - 10, rearViewWidth, rearViewHeight);
+				 renderer.render( scene, camera );
+
+				}
 
 		</script>
 
