@@ -382,13 +382,11 @@ document.addEventListener( "keydown", keyHandler, false );
 
 			function render() {
 
-				theta += 0.1;
-
-				// Move the camera in a circular pattern
-				camera.position.x = radius * Math.sin( THREE.MathUtils.degToRad( theta ) );
-				camera.position.y = radius * Math.sin( THREE.MathUtils.degToRad( theta ) );
-				camera.position.z = radius * Math.cos( THREE.MathUtils.degToRad( theta ) );
-				camera.lookAt( scene.position );
+				// slowly moves camera so that user traverses through gemoetries
+				camera.position.x -= 0.1;
+				camera.position.y -=0.1;
+				camera.position.z -= 0.1;
+				camera.lookAt(scene.position);
 
 				camera.updateMatrixWorld();
 
