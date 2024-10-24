@@ -128,8 +128,8 @@
       		let sensitivity = 0.1;
 			function onDocumentMouseMove( event ) {
 				event.preventDefault();
-				deltaX = ( event.clientX / window.innerWidth );  // Normalized mouse X
-				deltaY = -( event.clientY / window.innerHeight );  // Normalized mouse Y
+				deltaX = ( event.clientX / window.innerWidth ) * 2 - 1;  // Normalized mouse X
+				deltaY = -( event.clientY / window.innerHeight ) * 2 + 1;  // Normalized mouse Y
 			}
 
 		function animate() {
@@ -176,7 +176,7 @@
 //
 		function render() {
 
-			// above and beyond: raycaster allows for mouse picking of objects in space
+			// above and beyond: raycaster allows for mouse picking of objects in front of user
 			raycaster.setFromCamera( mouse, camera );
 				const intersects = raycaster.intersectObjects( scene.children, false );
 
