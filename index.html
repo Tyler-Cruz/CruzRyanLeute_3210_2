@@ -1,4 +1,4 @@
-<html>
+<!-- <html>
 <head>
     <title>CSC3210 CruzRyanLeute_2</title>
 </head>
@@ -249,7 +249,7 @@ function keyHandler(e) {
 document.addEventListener( "keydown", keyHandler, false );
     </script>
 </body>
-</html>
+</html> -->
 
 
 // THREE.js example with infinite floating cubes edited to use a perspective camera
@@ -291,24 +291,28 @@ document.addEventListener( "keydown", keyHandler, false );
 		<script type="module">
 
 			import * as THREE from 'three';
-
 			import Stats from 'three/addons/libs/stats.module.js';
 			//import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 
 			let camera, scene, raycaster, renderer, stats;
-
 			const mouse = new THREE.Vector2();
 			let INTERSECTED;
-			const radius = 100;
-			let theta = 0;
+			//const radius = 100;
+			//let theta = 0;
 
 			init();
 
 			function init() {
 
-				// Create a PerspectiveCamera with similar settings
+				// Create main camera
 				camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 1000 );
 				camera.position.set( 2, 1, 500 );
+
+        // create rear view camera
+        rearCamera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
+        rearCamera.position.copy(camera.position);
+        rearCamera.rotation.copy(camera.rotation);
+        rearCamera.rotateY(Math.PI); //rear camera face backwards
 
 				scene = new THREE.Scene();
 				scene.background = new THREE.Color( 0x000000 );
@@ -325,44 +329,35 @@ document.addEventListener( "keydown", keyHandler, false );
 				const sphere = new THREE.SphereGeometry(10,10,10);
 				const knot = new THREE.TorusKnotGeometry(3,1.2,192,24);
 
+        // adding cube objects
 				for ( let i = 0; i < 500; i ++ ) {
-
 					const object = new THREE.Mesh( cube, new THREE.MeshLambertMaterial( { color: Math.random() * 0xffffff } ) );
-
 					object.position.x = Math.random() * 800 - 400;
 					object.position.y = Math.random() * 800 - 400;
 					object.position.z = Math.random() * 800 - 400;
-
 					scene.add( object );
-
 				}
 
-
+        //adding sphere objects
 				for (let i = 0; i < 500; i++ ) {
 					const object2 = new THREE.Mesh( sphere, new THREE.MeshLambertMaterial( { color: Math.random() * 0xffffff } ) );
-
 					object2.position.x = Math.random() * 800 - 600;
 					object2.position.y = Math.random() * 800 - 600;
 					object2.position.z = Math.random() * 800 - 600;
-
 					scene.add (object2);
-
 				}
 
+        //adding knot objects
 				for ( let i = 0; i < 500; i ++ ) {
 					const object3 = new THREE.Mesh( knot, new THREE.MeshLambertMaterial( { color: Math.random() * 0xffffff } ) );
-
 					object3.position.x = Math.random() * 800 - 200;
 					object3.position.y = Math.random() * 800 - 200;
 					object3.position.z = Math.random() * 800 - 200;
-
 					scene.add( object3 );
-
 				}
 
 
 				raycaster = new THREE.Raycaster();
-
 				renderer = new THREE.WebGLRenderer( { antialias: true } );
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( window.innerWidth, window.innerHeight );
@@ -373,91 +368,101 @@ document.addEventListener( "keydown", keyHandler, false );
 				document.body.appendChild( stats.dom );
 
 				document.addEventListener( 'mousemove', onDocumentMouseMove );
-
 				window.addEventListener( 'resize', onWindowResize );
 
-				// Effect controller to simulate camera behavior
-				const effectController = {
-					focalLength: 15,
-					focalDepth: 3
-				};
+				// // Effect controller to simulate camera behavior
+				// const effectController = {
+				// 	focalLength: 15,
+				// 	focalDepth: 3
+				// };
 			}
 
 			function onWindowResize() {
-
 				camera.aspect = window.innerWidth / window.innerHeight;
 				camera.updateProjectionMatrix();
-
 				renderer.setSize( window.innerWidth, window.innerHeight );
-
 			}
 
 			function onDocumentMouseMove( event ) {
-
 				event.preventDefault();
-
 				mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 				mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
 			}
 
 			function animate() {
+        // main camera move based on mouse movement
+        camera.position.z -= 0.1; // forward
+				camera.rotation.y -= mouse.x * 0.002; // left-right
+				camera.rotation.x -= mouse.y * 0.002; // up-down
+				camera.lookAt(scene.position);
+				camera.updateMatrixWorld();
+
+				// rear camera to match the main camera's position
+				rearCamera.position.copy(camera.position);
+				rearCamera.rotation.copy(camera.rotation);
+				rearCamera.rotateY(Math.PI);
 
 				render();
 				stats.update();
-
 			}
 
 			function render() {
 
-				// slowly moves camera so that user traverses through gemoetries
-				camera.position.z -= 0.1;
-				camera.lookAt(scene.position);
+        // Main view render
+				renderer.setScissorTest(false);
+				renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
+				renderer.render(scene, camera);
 
-				camera.updateMatrixWorld();
+				// Rear-view mirror render
+				const rearViewWidth = window.innerWidth * 0.25;
+				const rearViewHeight = window.innerHeight * 0.25;
+				renderer.setScissorTest(true);
+				renderer.setScissor(window.innerWidth - rearViewWidth - 10, window.innerHeight - rearViewHeight - 10, rearViewWidth, rearViewHeight);
+				renderer.setViewport(window.innerWidth - rearViewWidth - 10, window.innerHeight - rearViewHeight - 10, rearViewWidth, rearViewHeight);
+				renderer.render(scene, rearCamera);
+
+
+				// // slowly moves camera so that user traverses through gemoetries
+				// camera.position.z -= 0.1;
+				// camera.lookAt(scene.position);
+
+				// camera.updateMatrixWorld();
+
+
 
 				// above and beyond: raycaster allows for mouse picking of objects in space
 				raycaster.setFromCamera( mouse, camera );
-
 				const intersects = raycaster.intersectObjects( scene.children, false );
-
 				if ( intersects.length > 0 ) {
-
 					if ( INTERSECTED != intersects[ 0 ].object ) {
-
 						if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
-
 						INTERSECTED = intersects[ 0 ].object;
 						INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
 						INTERSECTED.material.emissive.setHex( 0xff0000 );
-
 					}
 
 				} else {
-
 					if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
-
 					INTERSECTED = null;
-
 				}
 
-				renderer.clear();
-				renderer.render( scene, camera );
+				// renderer.clear();
+				// renderer.render( scene, camera );
 
 
 			    // adding rearview mirror view in top right corner	
 
-				renderer.setScissorTest(false);
-  				renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
-  				renderer.render(scene, camera);
+				// renderer.setScissorTest(false);
+  			// 	renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
+  			// 	renderer.render(scene, camera);
 
  				
-				 var rearViewWidth = window.innerWidth * 0.25;
-				 var rearViewHeight = window.innerHeight * 0.25;
-				 renderer.setScissorTest(true);
-				 renderer.setScissor(window.innerWidth - rearViewWidth - 10, window.innerHeight - rearViewHeight - 10, rearViewWidth, rearViewHeight);
-				 renderer.setViewport(window.innerWidth - rearViewWidth - 10, window.innerHeight - rearViewHeight - 10, rearViewWidth, rearViewHeight);
-				 renderer.render( scene, camera );
+				//  var rearViewWidth = window.innerWidth * 0.25;
+				//  var rearViewHeight = window.innerHeight * 0.25;
+				//  renderer.setScissorTest(true);
+				//  renderer.setScissor(window.innerWidth - rearViewWidth - 10, window.innerHeight - rearViewHeight - 10, rearViewWidth, rearViewHeight);
+				//  renderer.setViewport(window.innerWidth - rearViewWidth - 10, window.innerHeight - rearViewHeight - 10, rearViewWidth, rearViewHeight);
+				//  renderer.render( scene, camera );
 
 				}
 
