@@ -146,7 +146,7 @@
 
 				rearCamera.position.copy(camera.position); // set the rear camera to the same position as the main camera
 	      rearCamera.rotation.copy(camera.rotation); // match the rotation of the main camera
-	      rearCamera.position.addScaledVector(direction, -200); //make it look backwards
+	      rearCamera.rotateY(Math.PI)
 
 	      render();
 
