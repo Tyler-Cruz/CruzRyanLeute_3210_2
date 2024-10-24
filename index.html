@@ -563,8 +563,15 @@ document.addEventListener( "keydown", keyHandler, false );
 
 				}
 
+				//this object is using blending as another rasterization step
 				for ( let i = 0; i < 500; i ++ ) {
-					const object3 = new THREE.Mesh( knot, new THREE.MeshLambertMaterial( { color: Math.random() * 0xffffff } ) );
+					const material = new THREE.MeshLambertMaterial({color: Math.random() * 0xffffff });
+					material.blending = THREE.CustomBlending;
+					material.blendEquation = THREE.AddEquation;
+					material.blendSrc = THREE.SrcAlphaFactor;
+					material.blendDst = THREE.OneMinusSrcAlphaFactor;
+
+					const object3 = new THREE.Mesh(knot, material);
 
 					object3.position.x = Math.random() * 800 - 200;
 					object3.position.y = Math.random() * 800 - 200;
@@ -600,9 +607,11 @@ document.addEventListener( "keydown", keyHandler, false );
       let sensitivity = 0.1;
 			function onDocumentMouseMove( event ) {
 				event.preventDefault();
-				deltaX = ( event.clientX / window.innerWidth ) * 2 - 1;  // Normalized mouse X
-				deltaY = -( event.clientY / window.innerHeight ) * 2 + 1;  // Normalized mouse Y
+				deltaX = ( event.clientX / window.innerWidth );  // Normalized mouse X
+				deltaY = -( event.clientY / window.innerHeight );  // Normalized mouse Y
 			}
+
+		
 
 			function animate() {
 
@@ -634,7 +643,26 @@ document.addEventListener( "keydown", keyHandler, false );
 	      renderer.render(scene, rearCamera);
 
 	      stats.update();
+
 			}
+
+		//collision of camera:
+		//check the values of the camera and objects to see if there is an object within a certain distance
+		//if it hits that value destroy the object and shake camera for ~one second
+		//does not trigger yet
+		function collision(){
+
+		if(camera.position == object1.position || camera.position == object2.position || camera.position == object3.position){
+
+			//flips the cameras to make it "bounce off" the object
+			camera.lookAt(camera.position.clone().add(target * -1));
+			rearCamera.position.addScaledVector(direction * -1, -200);
+
+		//plays sound effect
+		let bonk = new Audio("Bonk - Sound Effect (HD) [ ezmp3.cc ].mp3");
+		bonk.play();
+		}
+}
 
 			// function render() {
 
