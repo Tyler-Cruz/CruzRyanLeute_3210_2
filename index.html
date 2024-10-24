@@ -19,7 +19,7 @@
 	<body>
 
 		<div id="info">
-			<a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> webgl - interactive cubes
+			<a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> 
 		</div>
 
 		<script type="importmap">
@@ -40,11 +40,11 @@
 
 			let camera, scene, raycaster, renderer, stats;
 			const mouse = new THREE.Vector2();
-      let target = new THREE.Vector3();
-      let rearCamera;
-      const speed = 0.2;  // Speed of the plane movement
+    		let target = new THREE.Vector3();
+      		let rearCamera;
+      		const speed = 0.2;  // Speed of the plane movement
 			let deltaX = 0, deltaY = 0; // Track mouse movement
-      let INTERSECTED = null;
+      		let INTERSECTED = null;
 
 			init();
 
@@ -110,9 +110,9 @@
 				document.addEventListener( 'mousemove', onDocumentMouseMove );
 				window.addEventListener( 'resize', onWindowResize );
 
-        rearCamera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
-        renderer.setAnimationLoop(animate);
-      }
+        		rearCamera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
+        		renderer.setAnimationLoop(animate);
+      		}
 
 			function onWindowResize() {
 				camera.aspect = window.innerWidth / window.innerHeight;
@@ -120,7 +120,7 @@
 				renderer.setSize( window.innerWidth, window.innerHeight );
 			}
 
-      let sensitivity = 0.1;
+      		let sensitivity = 0.1;
 			function onDocumentMouseMove( event ) {
 				event.preventDefault();
 				deltaX = ( event.clientX / window.innerWidth );  // Normalized mouse X
@@ -128,27 +128,27 @@
 			}
 
 
-			function animate() {
+		function animate() {
 
-        const targetX = deltaX * Math.PI * sensitivity;  // Map mouse X to rotation
-        const targetY = deltaY * Math.PI * sensitivity;  // Map mouse Y to rotation
+        	const targetX = deltaX * Math.PI * sensitivity;  // Map mouse X to rotation
+       		const targetY = deltaY * Math.PI * sensitivity;  // Map mouse Y to rotation
 
-        // mouse movement to camera's rotation
-        camera.rotation.y = targetX;  // rotate horizontally
-        camera.rotation.x = targetY;  // rotate vertically
-
-
-				// move the camera in the direction it's looking
-				const direction = new THREE.Vector3(); 
-				camera.getWorldDirection(direction);  // get the current direction camera is facing
-				camera.position.addScaledVector(direction, speed);  // Move camera forward in that direction
+        	// mouse movement to camera's rotation
+        	camera.rotation.y = targetX;  // rotate horizontally
+        	camera.rotation.x = targetY;  // rotate vertically
 
 
-				rearCamera.position.copy(camera.position); // set the rear camera to the same position as the main camera
-	      rearCamera.rotation.copy(camera.rotation); // match the rotation of the main camera
-	      rearCamera.rotateY(Math.PI)
+			// move the camera in the direction it's looking
+			const direction = new THREE.Vector3(); 
+			camera.getWorldDirection(direction);  // get the current direction camera is facing
+			camera.position.addScaledVector(direction, speed);  // Move camera forward in that direction
 
-	      render();
+
+			rearCamera.position.copy(camera.position); // set the rear camera to the same position as the main camera
+	      	rearCamera.rotation.copy(camera.rotation); // match the rotation of the main camera
+	      	rearCamera.rotateY(Math.PI)
+
+	      	render();
 
 			}
 
@@ -158,22 +158,22 @@
 		//does not trigger yet
 		function collision(){
 
-		if(camera.position == object1.position || camera.position == object2.position || camera.position == object3.position){
+			if(camera.position == object1.position || camera.position == object2.position || camera.position == object3.position){
 
-			//flips the cameras to make it "bounce off" the object
-			camera.lookAt(camera.position.clone().add(target * -1));
-			rearCamera.position.addScaledVector(direction * -1, -200);
+				//flips the cameras to make it "bounce off" the object
+				camera.lookAt(camera.position.clone().add(target * -1));
+				rearCamera.position.addScaledVector(direction * -1, -200);
 
-		//plays sound effect
-		let bonk = new Audio("Bonk - Sound Effect (HD) [ ezmp3.cc ].mp3");
-		bonk.play();
+			//plays sound effect
+			let bonk = new Audio("Bonk - Sound Effect (HD) [ ezmp3.cc ].mp3");
+			bonk.play();
+			}
 		}
-}
 //
-			function render() {
+		function render() {
 
-				// above and beyond: raycaster allows for mouse picking of objects in space
-				raycaster.setFromCamera( mouse, camera );
+			// above and beyond: raycaster allows for mouse picking of objects in space
+			raycaster.setFromCamera( mouse, camera );
 				const intersects = raycaster.intersectObjects( scene.children, false );
 
 				if ( intersects.length > 0 ) {
@@ -188,11 +188,11 @@
 					INTERSECTED = null;
 				}
 
-				renderer.clear();
+			renderer.clear();
 	      // Render the main camera
-        renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
-        renderer.setScissorTest(false);
-        renderer.render(scene, camera);
+        	renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
+        	renderer.setScissorTest(false);
+        	renderer.render(scene, camera);
 
 	      // adding rear-view mirror view in the top right corner
 	      const rearViewWidth = window.innerWidth * 0.25;
@@ -203,7 +203,7 @@
 	      renderer.render(scene, rearCamera);
 
 	      stats.update();
-				}
+		}
 
 		</script>
 
