@@ -102,7 +102,6 @@
 				renderer = new THREE.WebGLRenderer( { antialias: true } );
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( window.innerWidth, window.innerHeight );
-				// renderer.setAnimationLoop( animate );
 				document.body.appendChild( renderer.domElement );
 
 				stats = new Stats();
@@ -131,13 +130,18 @@
 
 			function animate() {
 
-				target.set(deltaX * 1000 * sensitivity, deltaY * 1000 * sensitivity, 0);  // Set the look-at point in front of the camera
+        const targetX = deltaX * Math.PI * sensitivity;  // Map mouse X to rotation
+        const targetY = deltaY * Math.PI * sensitivity;  // Map mouse Y to rotation
 
-				// Move the camera in the direction it's looking
-				const direction = new THREE.Vector3();  // Direction vector
-				camera.getWorldDirection(direction);  // Get the current direction camera is facing
+        // mouse movement to camera's rotation
+        camera.rotation.y = targetX;  // rotate horizontally
+        camera.rotation.x = targetY;  // rotate vertically
+
+
+				// move the camera in the direction it's looking
+				const direction = new THREE.Vector3(); 
+				camera.getWorldDirection(direction);  // get the current direction camera is facing
 				camera.position.addScaledVector(direction, speed);  // Move camera forward in that direction
-				camera.lookAt(camera.position.clone().add(target));  // Ensure camera looks at the target direction
 
 
 				rearCamera.position.copy(camera.position); // set the rear camera to the same position as the main camera
