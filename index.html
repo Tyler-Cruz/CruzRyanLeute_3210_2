@@ -147,6 +147,7 @@
 			camera.getWorldDirection(direction);  // get the current direction camera is facing
 			camera.position.addScaledVector(direction, speed);  // Move camera forward in that direction
 
+			collision();
 
 			rearCamera.position.copy(camera.position); // set the rear camera to the same position as the main camera
 	      	rearCamera.rotation.copy(camera.rotation); // match the rotation of the main camera
@@ -156,23 +157,45 @@
 
 		}
 
-		//collision of camera:
-		//check the values of the camera and objects to see if there is an object within a certain distance
-		//if it hits that value destroy the object and shake camera for ~one second
-		//does not trigger yet
-		function collision(){
+// 12/6 revision: added collision functionality that actually works
+// makes camera "bounce back" upon collision with objects in scene
+const cameraBoundingSphere = new THREE.Sphere(camera.position, 5); // sphere shaped bounding box for camera
 
-			if(camera.position == object1.position || camera.position == object2.position || camera.position == object3.position){
+function collision() {
+    const direction = new THREE.Vector3();
+    camera.getWorldDirection(direction);
 
-				//flips the cameras to make it "bounce off" the object
-				camera.lookAt(camera.position.clone().add(target * -1));
-				rearCamera.position.addScaledVector(direction * -1, -200);
+    // iterates through all objects in the scene
+    for (let i = 0; i < scene.children.length; i++) {
+        const object = scene.children[i];
 
-			//plays sound effect
-			let bonk = new Audio("Bonk - Sound Effect (HD) [ ezmp3.cc ].mp3");
-			bonk.play();
-			}
-		}
+        if (object.geometry) {
+            // creates a bounding sphere or box for the object
+            const objectBoundingBox = new THREE.Box3().setFromObject(object);
+
+            // checks if the camera's bounding sphere intersects the object's bounding box
+            if (objectBoundingBox.intersectsSphere(cameraBoundingSphere)) {
+                console.log("Collision detected with object!");
+
+                // plays the sound effect
+                const bonk = new Audio("Bonk - Sound Effect (HD) [ ezmp3.cc ].mp3");
+                bonk.play();
+
+                // creating camera "bounce back"
+                const bounceBackDistance = 20; // distance for bounce
+                camera.position.addScaledVector(direction.negate(), bounceBackDistance);
+
+                // adds shake effect to emphasize collision
+                const shakeAmount = 0.5; // Adjust for more/less shake
+                camera.position.x += (Math.random() - 0.5) * shakeAmount;
+                camera.position.y += (Math.random() - 0.5) * shakeAmount;
+                camera.position.z += (Math.random() - 0.5) * shakeAmount;
+
+                return; // exit the loop after detecting the first collision
+            }
+        }
+    }
+}
 //
 		function render() {
 
