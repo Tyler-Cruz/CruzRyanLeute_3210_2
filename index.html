@@ -147,6 +147,31 @@
 			camera.getWorldDirection(direction);  // get the current direction camera is facing
 			camera.position.addScaledVector(direction, speed);  // Move camera forward in that direction
 
+
+		// revision 12/6
+		// objects move in space now (morph in space uniquely)	
+		// torus rotates, cubes pulsate, spheres "squeeze" vertically and then horizontally over time
+		scene.children.forEach((object) => {
+		if (object.isMesh) {  // Check if the object is a mesh
+			if (object.geometry.type === "BoxGeometry") {
+				// Cubes pulsate in size 
+				const scale = Math.sin(Date.now() * 0.0015) * 0.3 + 1.3;  // Scale oscillates between 1.0 and 1.6
+				object.scale.set(scale, scale, scale);
+			} else if (object.geometry.type === "SphereGeometry") {
+				// spheres change scale non-uniformly variation
+				const scaleX = Math.sin(Date.now() * 0.001 + object.position.x) * 0.3 + 1.3;
+				const scaleY = Math.cos(Date.now() * 0.001 + object.position.y) * 0.3 + 1.3;
+				const scaleZ = Math.sin(Date.now() * 0.001 + object.position.z) * 0.3 + 1.3;
+				object.scale.set(scaleX, scaleY, scaleZ);
+			} else if (object.geometry.type === "TorusKnotGeometry") {
+				// torus knots rotate 
+				object.rotation.x += 0.01;  
+				object.rotation.y += 0.015;  
+				object.rotation.z += 0.007;  
+			}
+		}
+	});
+
 			collision();
 
 			rearCamera.position.copy(camera.position); // set the rear camera to the same position as the main camera
